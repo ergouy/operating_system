@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>操作系统实验</title>
+    <link href="shiyan1.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div id="out_div">
+    <div id="in_head">  操&nbsp  作&nbsp  系&nbsp  统&nbsp  实&nbsp  验 </div>
+    <div id="in_d1"><canvas id="myCanvas" ></canvas></div>
+    <div id="in_d2">
+        <table id="in_table">
+            <tr>
+                <td id="in_td1">就 绪 队 列</td>
+                <td id="in_ready"></td>
+            </tr>
+            <tr>
+                <td>运 行 队 列</td>
+                <td id="in_run"></td>
+            </tr>
+            <tr>
+                <td>阻 塞 队 列</td>
+                <td id="in_block"></td>
+            </tr>
+        </table>
+    </div>
+    <div id="in_d3">
+        <input type="text" id="div_name" placeholder="请输入进程名称...">
+        <input type="text" id="div_size" placeholder="请输入进程大小...">
+        <input type="button" id="div_button" value="创建进程">&nbsp;
+        <select id="div_select">
+            <option id="in_op1">请选择</option>
+            <option>时间片到</option>
+            <option>阻塞进程</option>
+            <option>唤醒进程</option>
+            <option>位示图</option>
+            <option>进程页表</option>
+            <option>地址转换</option>
+            <option>结束进程</option>
+        </select>
+    </div>
+    <div id="in_d4"></div>
+    <div id="in_d5"> 好 的 代 码 像 粥 一 样  都 是 时 间 熬 出 来 的 </div>
+</div>
+
+
+<script src="jquery.min.js"></script>
+<script src="shiyan1.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+#out_div{
+    margin:0 auto;
+    width: 600px;
+    height: 583px;
+    border-radius: 20px;
+    border: 1px solid;
+    background-color: aliceblue;
+}
+#in_head{
+    width: auto;
+    height: 30px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+#in_d1{
+    width: 199.5px;
+    height: 290px;
+    float: left;
+    border: 1px solid;
+}
+#in_d2{
+    width:396.5px;
+    height: 290px;
+    float: left;
+    border: 1px solid;
+}
+#in_d3{
+    width: 199.5px;
+    height: 237px;
+    float: left;
+    border: 1px solid;
+}
+#in_d4{
+    width:396.5px;
+    height: 237px;
+    float: left;
+    border: 1px solid;
+}
+#myCanvas{
+    width: 199px;
+    height: 289px;
+}
+#in_table{
+    width: 396.5px;
+    height: 290px;
+    border: 1px solid;
+    border-collapse: collapse;
+    text-align: center;
+}
+#in_table tr td{
+    border: 1px solid;
+}
+#in_td1{
+    width: 150px;
+}
+ #in_d4 table{
+    border-collapse:collapse;
+    width:90%;
+}
+#in_d4 tr.odd{
+    background-color:#f8f8f8;
+}
+#in_d4 tr{
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: lightgray;
+}
+#in_d4 td{
+    width:20%;
+    text-align:center;
+}
+#div_name{
+    width: 195px;
+    height:40px;
+    font-size: 18px;
+}
+#div_size{
+    width: 195px;
+    height:40px;
+    font-size: 18px;
+}
+#div_button{
+    width: 95px;
+    height: 30px;
+}
+#div_select{
+    width: 95px;
+    height: 30px;
+}
+#in_d5{
+    width: 600px;
+    text-align: center;
+    float: left;
+    color: hotpink;
+    font-weight: bold;
+}
