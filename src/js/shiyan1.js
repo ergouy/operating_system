@@ -11,7 +11,7 @@ var neicun = [];//内存位示图
 var waicun = [];//外存位示图
 var loadnum = 3;
 var blocksize = 10;
-
+var jindu_len = 0;
 
 function PageTable(page,blockno,swapspaceno,exists,modified){
     this.page = page;
@@ -28,7 +28,17 @@ function Node(namea,sizea){
         this.lru = [];//队列
 }
 
-
+//实验三
+function IoNode(name) {
+    this.name = name;
+    this.process = null;//执行进程
+    this.parent = new Array();//数组
+    this.waitDeque = new Array();//队列
+}
+var dets = new Array();
+var cocts = new Array();
+var chcts = new Array();
+//------
 //
 function init_bitmap(){//初始化位示图
 for(var i=0; i<8; ++i){//初始化内存
@@ -47,9 +57,7 @@ for(var i=0; i<16; ++i){//初始化外存
 }
 
 //初始化位示图
-window.onload = function(){
-    init_bitmap();
-}
+//------------------------------------
 
 function showbitmap(){//显示位示图
     var val = document.getElementById("in_op1").value;
@@ -168,6 +176,15 @@ function showpagetable(){
     var div = document.getElementById("in_d4");
     div.innerHTML = "";
     div.appendChild(table);
+}
+//
+//进度条显示
+function jindutiao() {
+    var ppp = jindu_len*4.5;
+    console.log(jindu_len);
+    console.log(jindu_len/150);
+    $("#div_boot_jindutiao").css("width",ppp);
+    document.getElementById("div_boot_jindutiao").innerText = jindu_len/150 * 100 + "%";
 }
 //
 //地址转换
@@ -310,7 +327,9 @@ function endprocess(){
             sum += arr1[i].sizea;
         }
     }
+    jindu_len -= top.sizea;
     qudiao(sum,top.sizea);
+    jindutiao();
     if(flag_end-1 >= 0 && arr1[flag_end-1].namea == ""){
         arr1[flag_end].sizea += arr1[flag_end-1].sizea;
         arr2.splice(arr2.indexOf(arr1[flag_end-1].sizea),1);
@@ -377,6 +396,7 @@ $("#div_button").click(
             var sum = 0;
             for(var i=0; i<arr1.length; ++i){
                 if(arr1[i].sizea == count && arr1[i].namea == ""){
+                    jindu_len += sizeb;
                     tianchong(sum,sizeb);
                     var pn = new Node("",arr1[i].sizea-sizeb);
                     arr2.unshift(pn.sizea);
@@ -388,9 +408,11 @@ $("#div_button").click(
                     sum = sum + arr1[i].sizea;
                 }
             }
+            jindutiao();
         }
     }
 );
+
 //
 $("#div_select").change(function(){
    var message = $("#div_select option:selected").text();
@@ -441,3 +463,356 @@ $("#div_select").change(function(){
            break;
    }
 });
+//-------------------------------------------
+//实验三
+
+
+//队列三兄弟
+//----------
+function Init() {
+    var device1 = new IoNode("设备1");
+    var device2 = new IoNode("设备2");
+    var device3 = new IoNode("设备3");
+    var device4 = new IoNode("设备4");
+
+    var controller1 = new IoNode("控制器1");
+    var controller2 = new IoNode("控制器2");
+    var controller3 = new IoNode("控制器3");
+
+    var enterclose1 = new IoNode("通道1");
+    var enterclose2 = new IoNode("通道2");
+
+    device1.parent.push(controller1);
+    device2.parent.push(controller1);
+    device3.parent.push(controller2);
+    device4.parent.push(controller3);
+    controller1.parent.push(enterclose1);
+    controller2.parent.push(enterclose1);
+    controller3.parent.push(enterclose2);
+
+    dets.push(device1);
+    dets.push(device2);
+    dets.push(device3);
+    dets.push(device4);
+    cocts.push(controller1);
+    cocts.push(controller2);
+    cocts.push(controller3);
+    chcts.push(enterclose1);
+    chcts.push(enterclose2);
+
+}
+//
+function containFather(fathername,list) {
+    for(var i=0; i<list.length; ++i){
+        if(list[i].name == fathername){
+            return true;
+        }
+    }
+    return false;
+}
+//
+function showStatus(){
+    var td_ul = $("#tree");
+    td_ul.empty();
+    var str = "<img class='addIcon' src='add.png'><img class='deleteIcon' src='delete.png'>";
+    for(var i=0; i<chcts.length; ++i){
+        var td_li = $("<li><span class='folder' id='tongdao' title='通道'>"+chcts[i].name+str+"</span></li>");
+        var kzq_ul = $("<ul></ul>");
+        for(j=0; j<cocts.length; ++j){//遍历控制器
+            if(containFather(chcts[i].name,cocts[j].parent)){
+                var kzq_li = $("<li><span class='folder' id='kongzhiqi' title='控制器'>"+cocts[j].name+str+"</span></li>");
+                var sb_ul = $("<ul></ul>");
+                for(k=0; k<dets.length; ++k){
+                    if(containFather(cocts[j].name,dets[k].parent)){
+                        var sb_li = $("<li><span class='folder' id='shebei' title='设备'>"+dets[k].name+"<img class='addIcon' src='tianjia.jpg'><img id='shanchu' src='shanchu.png'><img class='deleteIcon' src='delete.png'>"+"</span></li>");
+                        sb_ul.append(sb_li);
+                    }
+                }//设备列添加完成
+                kzq_li.append(sb_ul);
+                kzq_ul.append(kzq_li);
+            }
+        }//控制器添加完成
+        td_li.append(kzq_ul);
+        td_ul.append(td_li);
+    }
+    td_ul.treeview();
+}
+//初始化
+$(function(){
+    init_bitmap();
+    Init();
+    showStatus();
+});
+//鼠标悬停 和 鼠标离开 ---------------------------------
+$("body").on("mouseenter",".folder",function(){
+    $(this).children().css("visibility", "visible");
+    //$(".deleteIcon").css("visibility", "visible");
+});
+$("body").on("mouseleave",".folder",function(){
+    $(this).children().css("visibility", "hidden");
+    //$(".deleteIcon").css("visibility", "hidden");
+});
+//点击效果----
+function findMessage(name,list) {
+    var message = "运行进程:";
+    for(var i=0; i<list.length; ++i){
+        if(list[i].name == name){
+            if(list[i].process != null){
+                message += list[i].process.namea;
+            }
+            message += "\n";
+            message += "等待进程:";
+            for(var j=0; j<list[i].waitDeque.length; ++j){
+                message += list[i].waitDeque[j].namea;
+            }
+            message += "\n";
+            return message;
+        }
+    }
+}
+//
+$("body").on("click",".folder",function () {
+    var text = $(this).text();
+    var id = $(this).attr("id");
+    var str = "";
+    switch(id){
+        case "tongdao":
+            str = findMessage(text,chcts);
+            break;
+        case "kongzhiqi":
+            str = findMessage(text,cocts);
+            break;
+        case "shebei":
+            str = findMessage(text,dets);
+            break;
+        default:
+            alert("出错了");
+            break;
+    }
+    $(this).attr("title",str);
+});
+
+//-----------------------------------------------------------------------
+function addDevice(sonname,fathername,sonlist,fatherlist){
+    var newIonode = new IoNode(sonname);
+    for(var i=0; i<fatherlist.length; ++i){
+        if(fatherlist[i].name == fathername){
+            newIonode.parent.push(fatherlist[i]);
+            sonlist.push(newIonode);
+            break;
+        }
+    }
+}
+
+
+//---分---配---设---备----
+//------找到最短的队列放进去
+function minLength(process,list) {
+    var position = 0;
+    var val = list[0].waitDeque.length;
+    for(var i=1; i<list.length; ++i){
+        if(list[i].waitDeque.length < val){
+            position = i;
+            val = list[i].waitDeque.length;
+        }
+    }
+    list[position].waitDeque.push(process);
+}
+//
+function allocationPass(process,passlist) {//分配控制器
+    var tnum = -1;
+    for(var i=0; i<passlist.length; ++i){
+        if(passlist[i].process == null && passlist[i].waitDeque.length == 0){
+            tnum = 1;
+            passlist[i].process = process;
+            console.log("通道分配成功");
+            break;
+        }
+    }
+    if(tnum < 0){
+        minLength(process,passlist);
+    }
+}
+//
+function allocationController(process,controllerlist) {//分配控制器
+    var knum = -1;
+    for(var i=0; i<controllerlist.length; ++i){
+        if(controllerlist[i].process == null && controllerlist[i].waitDeque.length == 0){
+            knum = 1;
+            controllerlist[i].process = process;
+            console.log("控制器分配成功");
+            allocationPass(process,controllerlist[i].parent);
+            break;
+        }
+    }
+    if(knum < 0){
+        minLength(process,controllerlist);
+    }
+}
+//
+function allocationDevice(process,devicenode){//分配设备
+    if(devicenode.process == null && devicenode.waitDeque.length == 0){
+        devicenode.process = process;
+        console.log("设备分配成功");
+        bloc.push(run.shift());
+        run.push(read.shift());
+        allocationController(process,devicenode.parent);
+    }else{
+        devicenode.waitDeque.push(process);
+        bloc.push(run.shift());
+        if(read.length != 0){
+            run.push(read.shift());
+        }
+    }
+}
+//
+function  allocation(deviceNmae) {
+    var process = run[0];//待分配的进程
+    for(var i=0; i<dets.length; ++i){
+        if(dets[i].name == deviceNmae){
+            allocationDevice(process,dets[i]);
+            break;
+        }
+    }
+}
+//-- -- --  -- -- -- -- --
+$("body").on("click",".addIcon",function(){
+    var span = $(this).parent();
+    var fname = span.text();//父节点名
+    var id = span.attr("id");//父节点的数组名
+    if(id != "shebei"){
+        var sname = prompt("请输入子节点名称:");
+    }else{
+        sname = "peiqi";
+    }
+    if (sname != null && sname != ""){
+        switch (id){
+            case "tongdao":
+                addDevice(sname,fname,cocts,chcts);
+                break;
+            case "kongzhiqi":
+                addDevice(sname,fname,dets,cocts);
+                break;
+            case "shebei":
+                allocation(fname);
+                show();
+                break;
+            default:
+                alert("出错了");
+                break;
+        }
+        showStatus();
+    }
+});
+//删除设备-----------------------------------------
+function deleteIonode(name,thislist) {
+    for(var i=0; i<thislist.length; ++i){
+        if(thislist[i].name == name){
+            if(thislist[i].process == null && thislist[i].waitDeque.length == 0){
+                thislist.splice(i,1);
+            }
+            break;
+        }
+    }
+}
+//
+function count2(name,slist) {
+    var num = 0;
+    for(var i=0; i<slist.length; ++i){
+        for(var j=0; j<slist[i].parent.length; ++j){
+            if(slist[i].parent[j].name == name){
+                ++num;
+            }
+        }
+    }
+    return num;
+}
+
+function deleteDevice(name,thislist,slist){
+    for(var i=0; i<thislist.length; ++i){
+        if(thislist[i].name == name){
+            if(count2(name,slist) <= 0){
+                deleteIonode(name,thislist);
+            }
+        }
+    }
+}
+//
+$("body").on("click",".deleteIcon",function(){
+    var span = $(this).parent();
+    var fname = span.text();//要删除节点名称
+    var id = span.attr("id");//节点所在数组
+    switch (id){
+        case "tongdao":
+            deleteDevice(fname,chcts,cocts);
+            break;
+        case "kongzhiqi":
+            deleteDevice(fname,cocts,dets);
+            break;
+        case "shebei":
+            deleteIonode(fname,dets);
+            break;
+        default:
+            alert("出错了");
+            break;
+    }
+    showStatus();
+});
+//---------------------------------------------------
+//释放进程
+$("body").on("click","#shanchu",function () {
+    var span = $(this).parent();
+    var devicename = span.text();
+    for(var i=0; i<dets.length; ++i){
+        if(dets[i].name == devicename){
+            if(dets[i].process != null){//设备对应的进程不空
+                var process = dets[i].process;//记录要释放的进程
+                if(dets[i].waitDeque.length != 0){
+                    dets[i].process = dets[i].waitDeque.shift();
+                    allocationController(dets[i].process,dets[i].parent);
+                }else{
+                    dets[i].process = null;
+                }
+                //释放控制器
+                for(var j=0; j<dets[i].parent.length; ++j){
+                    if(dets[i].parent[j].process.namea == process.namea){
+                        if(dets[i].parent[j].waitDeque.length != 0){
+                            dets[i].parent[j].process = dets[i].parent[j].waitDeque.shift();
+                            allocationPass(dets[i].parent[j].process,dets[i].parent[j].parent);
+                        }else{
+                            dets[i].parent[j].process = null;
+                        }
+                        //释放通道
+                        var controller = dets[i].parent[j];
+                        for(var k=0; k<controller.parent.length; ++k){
+                            if(controller.parent[k].process.namea == process.namea){
+                                if(controller.parent[k].waitDeque.length != 0){
+                                    controller.parent[k].process = controller.parent[k].waitDeque.shift();
+                                }else{
+                                    controller.parent[k].process = null;
+                                }
+                                for(var q=0; q<bloc.length; ++q){
+                                    if(bloc[q].namea == process.namea){
+                                        read.push(bloc[q]);
+                                        bloc.splice(q,1);
+                                        if(run.length == 0){
+                                            run.push(read.shift());
+                                        }
+                                        break;
+                                    }
+                                }
+                                console.log("释放成功");
+                                show();
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            break;
+        }
+    }
+
+});
+

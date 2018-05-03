@@ -2,12 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>操作系统实验</title>
-    <link href="shiyan1.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="jquery.treeview.css">
+    <link rel="stylesheet" href="shiyan1.css">
+    <script src="demo/jquery.cookie.js" type="text/javascript"></script>
+    <script src="jquery.treeview.js" type="text/javascript"></script>
 </head>
 <body>
+<div class="shu">
+    <div id="shu_name">设备管理</div>
+    <ul id="tree" class="filetree">
+    </ul>
+</div>
 <div id="out_div">
     <div id="in_head">  操&nbsp  作&nbsp  系&nbsp  统&nbsp  实&nbsp  验 </div>
+    <div id="in_tbody">
+    <div id="div_boot_jindutiao" class="progress-bar progress-bar-success progress-bar-striped"  style="width: 0%">0%</div>
+    </div>
     <div id="in_d1"><canvas id="myCanvas" ></canvas></div>
     <div id="in_d2">
         <table id="in_table">
@@ -42,10 +56,10 @@
     </div>
     <div id="in_d4"></div>
     <div id="in_d5"> 好 的 代 码 像 粥 一 样  都 是 时 间 熬 出 来 的 </div>
+
 </div>
 
 
-<script src="jquery.min.js"></script>
 <script src="shiyan1.js"></script>
 </body>
 </html>
